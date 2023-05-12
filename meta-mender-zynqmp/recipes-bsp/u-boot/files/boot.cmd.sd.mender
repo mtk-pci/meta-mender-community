@@ -1,0 +1,35 @@
+# This is a boot script for U-Boot with Mender integration
+# Generate boot.scr:
+# mkimage -c none -A arm -T script -d boot.cmd.sd.mender boot.scr
+#
+################
+@@PRE_BOOTENV@@
+
+# Mender load and boot instructions
+run mender_setup
+
+# If root is set in bootargs, this should override the setting by placing it at the end
+setenv bootargs ${bootargs} root=${mender_kernel_root}
+
+if test -e ${mender_uboot_root} /boot/@@FIT_IMAGE@@; then
+	ext4load ${mender_uboot_root} @@FIT_IMAGE_LOAD_ADDRESS@@ /boot/@@FIT_IMAGE@@;
+	bootm @@FIT_IMAGE_LOAD_ADDRESS@@;
+fi
+if test -e ${mender_uboot_root} /boot/@@KERNEL_IMAGE@@; then
+	ext4load ${mender_uboot_root} @@KERNEL_LOAD_ADDRESS@@ /boot/@@KERNEL_IMAGE@@;
+fi
+if test -e ${mender_uboot_root} /boot/system.dtb; then
+	ext4load ${mender_uboot_root} @@DEVICETREE_ADDRESS@@ /boot/system.dtb;
+fi
+if test -e ${mender_uboot_root} /boot/@@RAMDISK_IMAGE1@@ && test "${skip_tinyramdisk}" != "yes"; then
+	ext4load ${mender_uboot_root} @@RAMDISK_IMAGE_ADDRESS@@ /boot/@@RAMDISK_IMAGE1@@;
+	@@KERNEL_BOOTCMD@@ @@KERNEL_LOAD_ADDRESS@@ @@RAMDISK_IMAGE_ADDRESS@@ @@DEVICETREE_ADDRESS@@
+fi
+if test -e ${mender_uboot_root} /boot/@@RAMDISK_IMAGE@@ && test "${skip_ramdisk}" != "yes"; then
+	ext4load ${mender_uboot_root} @@RAMDISK_IMAGE_ADDRESS@@ /boot/@@RAMDISK_IMAGE@@;
+	@@KERNEL_BOOTCMD@@ @@KERNEL_LOAD_ADDRESS@@ @@RAMDISK_IMAGE_ADDRESS@@ @@DEVICETREE_ADDRESS@@
+fi
+
+@@KERNEL_BOOTCMD@@ @@KERNEL_LOAD_ADDRESS@@ - @@DEVICETREE_ADDRESS@@
+
+run mender_try_to_recover

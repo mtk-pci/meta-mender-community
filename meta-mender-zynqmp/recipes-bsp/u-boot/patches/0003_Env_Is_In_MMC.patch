@@ -1,0 +1,13 @@
+diff --git a/board/xilinx/zynqmp/zynqmp.c b/board/xilinx/zynqmp/zynqmp.c
+index 24403d11..9651bfc9 100644
+--- a/board/xilinx/zynqmp/zynqmp.c
++++ b/board/xilinx/zynqmp/zynqmp.c
+@@ -835,7 +835,7 @@ enum env_location env_get_location(enum env_operation op, int prio)
+ 			return ENVL_FAT;
+ 		if (IS_ENABLED(CONFIG_ENV_IS_IN_EXT4))
+ 			return ENVL_EXT4;
+-		return ENVL_NOWHERE;
++		return ENVL_MMC;
+ 	case NAND_MODE:
+ 		if (IS_ENABLED(CONFIG_ENV_IS_IN_NAND))
+ 			return ENVL_NAND;

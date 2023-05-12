@@ -1,0 +1,13 @@
+#!/bin/bash
+
+set -e
+
+STATE="$1"
+FILES="$2"
+
+case "$STATE" in
+    ArtifactInstall)
+        cp -f "$FILES"/files/* /uboot
+        ;;
+esac
+exit 0

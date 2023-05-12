@@ -1,0 +1,38 @@
+diff -Naur A/components/yocto/layers/meta-petalinux/classes/plnx-deploy.bbclass B/components/yocto/layers/meta-petalinux/classes/plnx-deploy.bbclass
+--- A/components/yocto/layers/meta-petalinux/classes/plnx-deploy.bbclass	2022-12-01 23:42:47.667595476 -0800
++++ B/components/yocto/layers/meta-petalinux/classes/plnx-deploy.bbclass	2023-04-28 14:16:55.258033208 -0700
+@@ -221,15 +221,31 @@
+     output_path = d.getVarFlag('plnx_deploy', 'dirs')
+     search_str = image_name + image_suffix
+     search_str = re.escape(search_str)
++
++    image_prefix = ""
++    if len(image_name) > 0:
++        image_prefix=image_name + '_'
++
+     if os.path.exists(deploy_dir):
+         for _file in os.listdir(deploy_dir):
+             if re.search(search_str, _file):
+                 if image_name.find('initramfs') != -1:
+-                    dest_name='ramdisk'
++                    dest_name=image_prefix + 'ramdisk'
+                 else:
+-                    dest_name='rootfs'
++                    dest_name=image_prefix + 'rootfs'
+                 source_name=str(_file)
+-                dest_name=dest_name + source_name.split(image_suffix)[1]
++
++                # image_suffix may be empty
++                if not image_suffix:
++                    post_name=source_name.split('.', 1)
++                    if len(post_name) > 1:
++                        dest_name=dest_name + '.' + post_name[1]
++
++                else:
++                    post_name=source_name.split(image_suffix, 1)
++                    if len(post_name) > 1:
++                        dest_name=dest_name + post_name[1]
++
+                 copy_files(deploy_dir + '/' + source_name,output_path + '/' + dest_name)
+
+     extra_files = d.getVar('EXTRA_FILESLIST') or ""
