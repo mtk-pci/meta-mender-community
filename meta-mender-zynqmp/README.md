@@ -61,9 +61,13 @@ Add the following line to include required configuration settings for Mender:
 include conf/mender-zynqmp.conf
 
 
-### Content covered by LICENSE_mender-zynq
+## Content covered by LICENSE_mender-zynq
 ./recipes-bsp/u-boot/u-boot-mender-zynqmp.inc (from u-boot-mender-zynq.inc)
 ./recipes-bsp/u-boot/u-boot-xlnx_%.bbappend
 
 Using v2021.1 workaround found here: https://support.xilinx.com/s/article/75730?language=en_US
 
+
+## Errata
+
+The zynmp-boot update script will install correctly and appear accessible to Mender tools.  However, it has not yet successfully tested an update of BOOT.BIN or it's multiboot fallback equivalents.  Further debugging and feature updates required.
