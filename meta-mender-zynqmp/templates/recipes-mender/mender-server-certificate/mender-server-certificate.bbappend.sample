@@ -1,0 +1,4 @@
+DESCRIPTION = "Mender server certificate layer for PCI"
+
+FILESEXTRAPATHS:prepend := "${THISDIR}/files:"
+SRC_URI:append = " file://server.crt"

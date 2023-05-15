@@ -1,0 +1,60 @@
+# https://docs.mender.io/3.4/system-updates-yocto-project/board-integration/partition-configuration
+# Example: Memory card storage
+MENDER_STORAGE_DEVICE = "/dev/mmcblk0"
+# Example: Memory card with 8GiB of storage.
+MENDER_STORAGE_TOTAL_SIZE_MB = "8192"
+# Boot part storage is larger than common Mender installs to accommodate FPGA bitstreams
+MENDER_BOOT_PART_SIZE_MB = "128"
+
+MENDER_UBOOT_STORAGE_INTERFACE = "mmc"
+MENDER_UBOOT_STORAGE_DEVICE = "0"
+
+# The name of the disk image and Artifact that will be built.
+# This is what the device will report that it is running, and different updates must have different names
+# because Mender will skip installation of an Artifact if it is already installed.
+MENDER_ARTIFACT_NAME ?= "rootfs-v0.0.0.dev0"
+
+# The version of Mender to build. This needs to match an existing recipe in the meta-mender repository.
+#
+# Given your Yocto Project version, see which versions of Mender you can currently build here:
+# https://docs.mender.io/overview/compatibility#mender-client-and-yocto-project-version
+#
+# Given a Mender client version, see the corresponding version of the mender-artifact utility:
+# https://docs.mender.io/overview/compatibility#mender-clientserver-and-artifact-format
+
+#PREFERRED_VERSION_mender-client = "3.4.0"
+#PREFERRED_VERSION_mender-artifact = "3.10.0"
+#PREFERRED_VERSION_mender-artifact-native = "3.10.0"
+#PREFERRED_VERSION_mender-connect = "2.1.0"
+
+IMAGE_INSTALL:append = " mender-connect"
+MENDER_CONNECT_USER = "nobody"
+MENDER_CONNECT_SHELL = "/bin/bash"
+
+SIGGEN_UNLOCKED_RECIPES += "\
+	run-postinsts \
+	"
+#	e2fsprogs-native \
+#	dosfstools-native \
+#	util-linux-native \
+#	gptfdisk-native \
+#	parted-native \
+#	automake-native \
+#	autoconf-native \
+#	lz4-native \
+#	qemu-xilinx-native \
+#	bootgen-native \
+#	"
+
+ARTIFACTIMG_FSTYPE = "ext4"
+SDIMG_ROOTFS_TYPE = "ext4"
+
+IMAGE_FSTYPES:append = " dataimg"
+
+# The mender-inventory-geo script relies on a third party service for geolocating the device 
+# through its IP address, which will be disabled with the line below for security purposes.
+PACKAGECONFIG:remove:pn-mender-client = " inventory-network-scripts"
+
+# libmetal (openamp)
+# if user want to enable hugetlbfs support, please
+# add "DEPENDS:append:pn-libmetal = " libhugetlbfs "" to your local.conf

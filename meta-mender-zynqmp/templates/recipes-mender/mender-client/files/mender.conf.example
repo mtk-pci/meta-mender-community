@@ -1,0 +1,7 @@
+{
+    "InventoryPollIntervalSeconds": 28800,
+    "RetryPollIntervalSeconds": 300,
+    "ServerURL": "https://docker.mender.io",
+    "TenantToken": "dummy",
+    "UpdatePollIntervalSeconds": 1800,
+}

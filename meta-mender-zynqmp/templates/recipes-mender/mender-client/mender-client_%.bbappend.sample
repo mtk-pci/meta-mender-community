@@ -1,0 +1,14 @@
+DESCRIPTION = "Mender client layer addendum for ZynqMP device identity"
+LICENSE = "MIT"
+
+FILESEXTRAPATHS:prepend := "${THISDIR}/files:"
+SRC_URI += "file://mender.conf \
+            "
+
+# Explicitly clear variables that are intended to be set in mender.conf file
+MENDER_SERVER_URL = ""
+MENDER_UPDATE_POLL_INTERVAL_SECONDS = ""
+MENDER_INVENTORY_POLL_INTERVAL_SECONDS = ""
+MENDER_TENANT_TOKEN = ""
+
+PACKAGECONFIG:append = " modules"

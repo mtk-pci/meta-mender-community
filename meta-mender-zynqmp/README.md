@@ -53,12 +53,27 @@ The patch ./recipes-bsp/images/patches/0001_Mender_PLNX_Deploy.patch must be app
 
 The plnx-deploy.bbclass file was not configured to handle some naming requirements assumed by the Mender recipe, and it also didn't allow for separation of build outputs by the IMAGE_NAME variable.  Both features are enabled in the patched version of plnx-deploy.bbclass.
 
+### Add target-specific recipes
+
+Additional user recipe(s) should be included to add target-specific settings.  This could be done within the meta-user layer associated with Petalinux (see above) or with another custom layer added to the system.
+
+Within the templates found in this layer, examples from templates/* could be renamed to their appropriate file types and updated with any required custom settings.  The directory recipes-mender could then be placed in the following location (for example):
+
+```<petalinux project directory (name of project)>/project-spec/meta-user/recipes-mender/```
+
 ### Include local.conf in Petalinux build
 In <petalinux project directory>/project-spec/meta-user/conf/petalinuxbsp.conf
 
-Add the following line to include required configuration settings for Mender:
+Add the following lines to include required configuration settings for Mender:
 
 include conf/mender-zynqmp.conf
+include conf/<user layer name for mender-zynqmp-target.conf example>
+
+The image recipe file should include the following line:
+
+```inherit mender-zynqmp```
+
+(That recipe in turn had inherited mender-full from the meta-mender-core layer.)
 
 
 ## Content covered by LICENSE_mender-zynq
