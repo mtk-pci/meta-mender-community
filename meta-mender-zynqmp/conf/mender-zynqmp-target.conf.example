@@ -22,9 +22,10 @@ MENDER_ARTIFACT_NAME ?= "rootfs-v0.0.0.dev0"
 # Given a Mender client version, see the corresponding version of the mender-artifact utility:
 # https://docs.mender.io/overview/compatibility#mender-clientserver-and-artifact-format
 
-#PREFERRED_VERSION_mender-client = "3.4.0"
-#PREFERRED_VERSION_mender-artifact = "3.10.0"
-#PREFERRED_VERSION_mender-artifact-native = "3.10.0"
+#PREFERRED_VERSION_mender-client = "3.5.0"
+# mender-artifact 3.10 is not compatible with honister release in Petalinux 2022.1, so fall back to 3.9
+PREFERRED_VERSION_mender-artifact = "3.9.0"
+PREFERRED_VERSION_mender-artifact-native = "3.9.0"
 #PREFERRED_VERSION_mender-connect = "2.1.0"
 
 IMAGE_INSTALL:append = " mender-connect"
