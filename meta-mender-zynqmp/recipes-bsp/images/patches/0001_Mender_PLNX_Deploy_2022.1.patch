@@ -1,7 +1,7 @@
 diff -Naur A/components/yocto/layers/meta-petalinux/classes/plnx-deploy.bbclass B/components/yocto/layers/meta-petalinux/classes/plnx-deploy.bbclass
 --- A/components/yocto/layers/meta-petalinux/classes/plnx-deploy.bbclass	2022-12-01 23:42:47.667595476 -0800
-+++ B/components/yocto/layers/meta-petalinux/classes/plnx-deploy.bbclass	2023-06-05 12:22:22.434283200 -0700
-@@ -233,15 +233,31 @@
++++ B/components/yocto/layers/meta-petalinux/classes/plnx-deploy.bbclass	2023-04-28 14:16:55.258033208 -0700
+@@ -221,15 +221,31 @@
      output_path = d.getVarFlag('plnx_deploy', 'dirs')
      search_str = image_name + image_suffix
      search_str = re.escape(search_str)
@@ -12,7 +12,7 @@ diff -Naur A/components/yocto/layers/meta-petalinux/classes/plnx-deploy.bbclass 
 +
      if os.path.exists(deploy_dir):
          for _file in os.listdir(deploy_dir):
-             if re.search(search_str, _file) and not _file.endswith('.qemu-sd-fatimg'):
+             if re.search(search_str, _file):
                  if image_name.find('initramfs') != -1:
 -                    dest_name='ramdisk'
 +                    dest_name=image_prefix + 'ramdisk'
