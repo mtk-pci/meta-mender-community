@@ -8,8 +8,11 @@
 # Mender load and boot instructions
 run mender_setup
 
+# Default bootargs
+setenv default_bootargs ${bootargs}
+
 # If root is set in bootargs, this should override the setting by placing it at the end
-setenv bootargs ${bootargs} root=${mender_kernel_root}
+setenv bootargs ${default_bootargs} root=${mender_kernel_root}
 
 if test -e ${mender_uboot_root} /boot/@@FIT_IMAGE@@; then
 	ext4load ${mender_uboot_root} @@FIT_IMAGE_LOAD_ADDRESS@@ /boot/@@FIT_IMAGE@@;
