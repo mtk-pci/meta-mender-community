@@ -36,7 +36,7 @@ The current layer expects to be used within the Petalinux tool provided by Xilin
 
 ## Petalinux Setup
 
-The Mender integration found here was developed and tested with Petalinux version 2022.1, which was a milestone release for Petalinux that included systemd enabled by default.  Petalinux 2022.1 uses the Yocto honistor (3.4) version under the hood.
+The Mender integration found here was developed and tested with Petalinux version 2022.1, which was a milestone release for Petalinux that included systemd enabled by default.  Petalinux 2022.1 and 2022.2 use the Yocto honistor (3.4) version under the hood.
 
 Petalinux projects include a default structure that requires placing the meta-mender-zynqmp layer (and dependency meta-mender-core layer) in the following directory locations:
 
@@ -46,6 +46,16 @@ Petalinux projects include a default structure that requires placing the meta-me
 There is a default layer within Petalinux which will be located here (referenced below):
 
 <petalinux project directory (name of project)>/project-spec/meta-user
+
+The recipes that were included in the image for testing were added using the following command in <top-level-image-recipe>.inc or <top-level-image-recipe>.bb:
+
+```
+IMAGE_INSTALL:append = "\
+        mender-server-certificate \
+        mender-zynqmp \
+        mender-system-bin \
+"
+```
 
 ### Petalinux Patch Required
 
@@ -72,7 +82,6 @@ include conf/<user layer name for mender-zynqmp-target.conf example>
 #### Change to previous
 
 Previously, the image recipe file needed to include `inherit mender-zynqmp`, but that has changed so that the mender-zynqmp.bbclass is no longer needed (functionality replaced by mender-system-bin and other recommended updates).
-
 
 ## Content covered by LICENSE_mender-zynq
 ./recipes-bsp/u-boot/u-boot-mender-zynqmp.inc (from u-boot-mender-zynq.inc)
