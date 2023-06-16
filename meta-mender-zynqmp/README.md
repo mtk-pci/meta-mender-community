@@ -69,11 +69,9 @@ Add the following lines to include required configuration settings for Mender:
 include conf/mender-zynqmp.conf
 include conf/<user layer name for mender-zynqmp-target.conf example>
 
-The image recipe file should include the following line:
+#### Change to previous
 
-```inherit mender-zynqmp```
-
-(That recipe in turn had inherited mender-full from the meta-mender-core layer.)
+Previously, the image recipe file needed to include `inherit mender-zynqmp`, but that has changed so that the mender-zynqmp.bbclass is no longer needed (functionality replaced by mender-system-bin and other recommended updates).
 
 
 ## Content covered by LICENSE_mender-zynq
@@ -86,3 +84,5 @@ Using v2021.1 workaround found here: https://support.xilinx.com/s/article/75730?
 ## Errata
 
 The zynmp-boot update script will install correctly and appear accessible to Mender tools.  However, it has not yet successfully tested an update of BOOT.BIN or it's multiboot fallback equivalents.  Further debugging and feature updates required.
+
+zynmp-boot is expected to be replaced by state scripts (Mender feature) for updating boot files when necessary.

@@ -14,15 +14,16 @@ setenv default_bootargs ${bootargs}
 # If root is set in bootargs, this should override the setting by placing it at the end
 setenv bootargs ${default_bootargs} root=${mender_kernel_root}
 
-if test -e ${mender_uboot_root} /boot/@@FIT_IMAGE@@; then
-	ext4load ${mender_uboot_root} @@FIT_IMAGE_LOAD_ADDRESS@@ /boot/@@FIT_IMAGE@@;
-	bootm @@FIT_IMAGE_LOAD_ADDRESS@@;
+if test -e ${mender_uboot_root} /boot/system.bin; then
+	ext4load ${mender_uboot_root} @@BITSTREAM_LOAD_ADDRESS@@ /boot/system.bin && fpga load 0 @@BITSTREAM_LOAD_ADDRESS@@ ${filesize}
+elif test -e ${mender_uboot_root} /boot/system.bit; then
+	ext4load ${mender_uboot_root} @@BITSTREAM_LOAD_ADDRESS@@ /boot/system.bit && fpga loadp 0 @@BITSTREAM_LOAD_ADDRESS@@ ${filesize}
 fi
 if test -e ${mender_uboot_root} /boot/@@KERNEL_IMAGE@@; then
 	ext4load ${mender_uboot_root} @@KERNEL_LOAD_ADDRESS@@ /boot/@@KERNEL_IMAGE@@;
 fi
-if test -e ${mender_uboot_root} /boot/system.dtb; then
-	ext4load ${mender_uboot_root} @@DEVICETREE_ADDRESS@@ /boot/system.dtb;
+if test -e ${mender_uboot_root} /boot/devicetree/system-top.dtb; then
+	ext4load ${mender_uboot_root} @@DEVICETREE_ADDRESS@@ /boot/devicetree/system-top.dtb;
 fi
 if test -e ${mender_uboot_root} /boot/@@RAMDISK_IMAGE1@@ && test "${skip_tinyramdisk}" != "yes"; then
 	ext4load ${mender_uboot_root} @@RAMDISK_IMAGE_ADDRESS@@ /boot/@@RAMDISK_IMAGE1@@;

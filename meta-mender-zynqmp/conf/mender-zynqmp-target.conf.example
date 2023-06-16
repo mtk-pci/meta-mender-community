@@ -52,6 +52,13 @@ SDIMG_ROOTFS_TYPE = "ext4"
 
 IMAGE_FSTYPES:append = " dataimg"
 
+# Mender u-boot via boot.scr only requires one image type in the rootfs
+KERNEL_IMAGETYPES:remove = " \
+    fitImage \
+    vmlinux \
+    Image.gz \
+    "
+
 # The mender-inventory-geo script relies on a third party service for geolocating the device 
 # through its IP address, which will be disabled with the line below for security purposes.
 PACKAGECONFIG:remove:pn-mender-client = " inventory-network-scripts"
