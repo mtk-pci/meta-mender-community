@@ -32,20 +32,21 @@ revision: HEAD
 
 N/A (yet)
 
-The current layer expects to be used within the Petalinux tool provided by Xilinx, which uses Yocto under the hood but in a more constrained way.  Guidance below is based on use within the Petalinux framework.
+The current layer expects to be used within the PetaLinux tool provided by Xilinx, which uses Yocto under the hood but in a more constrained way.  Guidance below is based on use within the PetaLinux framework.
 
-## Petalinux Setup
+## PetaLinux Setup
 
-The Mender integration found here was developed and tested with Petalinux version 2022.1, which was a milestone release for Petalinux that included systemd enabled by default.  Petalinux 2022.1 and 2022.2 use the Yocto honistor (3.4) version under the hood.
+The Mender integration found here was developed and tested with PetaLinux version 2022.1, which was a milestone release for PetaLinux that included systemd enabled by default.  PetaLinux 2022.1 and 2022.2 use the Yocto honistor (3.4) version under the hood.
 
-Petalinux projects include a default structure that requires placing the meta-mender-zynqmp layer (and dependency meta-mender-core layer) in the following directory locations:
+PetaLinux projects include a default structure that requires placing the meta-mender-zynqmp layer (and dependency meta-mender-core layer) in the following directory locations:
 
-<petalinux project directory (name of project)>/project-spec/meta-mender-zynqmp
-<petalinux project directory (name of project)>/project-spec/meta-mender-core
+`<petalinux project directory (name of project)>/project-spec/meta-mender-zynqmp`
 
-There is a default layer within Petalinux which will be located here (referenced below):
+`<petalinux project directory (name of project)>/project-spec/meta-mender-core`
 
-<petalinux project directory (name of project)>/project-spec/meta-user
+There is a default layer within PetaLinux which will be located here (referenced below):
+
+`<petalinux project directory (name of project)>/project-spec/meta-user`
 
 The recipes that were included in the image for testing were added using the following command in <top-level-image-recipe>.inc or <top-level-image-recipe>.bb:
 
@@ -57,27 +58,33 @@ IMAGE_INSTALL:append = "\
 "
 ```
 
-### Petalinux Patch Required
+### PetaLinux Patch Required
 
-The patch ./recipes-bsp/images/patches/0001_Mender_PLNX_Deploy.patch must be applied to the Petalinux project installation before building this recipe.
+The patch ./recipes-bsp/images/patches/0001_Mender_PLNX_Deploy.patch must be applied to the PetaLinux project installation before building this recipe.
 
 The plnx-deploy.bbclass file was not configured to handle some naming requirements assumed by the Mender recipe, and it also didn't allow for separation of build outputs by the IMAGE_NAME variable.  Both features are enabled in the patched version of plnx-deploy.bbclass.
 
 ### Add target-specific recipes
 
-Additional user recipe(s) should be included to add target-specific settings.  This could be done within the meta-user layer associated with Petalinux (see above) or with another custom layer added to the system.
+Additional user recipe(s) should be included to add target-specific settings.  This could be done within the meta-user layer associated with PetaLinux (see above) or with another custom layer added to the system.
 
-Within the templates found in this layer, examples from templates/* could be renamed to their appropriate file types and updated with any required custom settings.  The directory recipes-mender could then be placed in the following location (for example):
+Within the templates found in this layer, examples from `templates` could be renamed to their appropriate file types and updated with any required custom settings.  The directory recipes-mender could then be placed in the following location (for example):
 
 ```<petalinux project directory (name of project)>/project-spec/meta-user/recipes-mender/```
 
-### Include local.conf in Petalinux build
-In <petalinux project directory>/project-spec/meta-user/conf/petalinuxbsp.conf
+### Include yocto-style *.conf files in PetaLinux build
+First, if necessary, create your own mender-zynqmp-target.conf file based on the example provided in the templates folder of this repository.  Examples include mender-zynqmp-u96v2.conf or mender-zynmp-iwg36s.conf, but you can name it whatever you like.
 
-Add the following lines to include required configuration settings for Mender:
+Then, in `<petalinux project directory>/project-spec/meta-user/conf/petalinuxbsp.conf` you must add the following lines to include required configuration settings for Mender:
 
+```
 include conf/mender-zynqmp.conf
-include conf/<user layer name for mender-zynqmp-target.conf example>
+include conf/mender-zynqmp-<target name>.conf
+```
+
+PetaLinux may ignore or overwrite the local.conf file that Yocto users would associate with this type of include command.  Instead, PetaLinux requires that manually included conf files be added to the `<petalinux project directory>/project-spec/meta-user/conf/petalinuxbsp.conf` file.
+
+If you are using a non-petalinux flow (pure yocto or other), then the conf files above should be included in the local.conf file for the project.
 
 #### Change to previous
 
