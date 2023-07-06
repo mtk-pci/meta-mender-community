@@ -1,5 +1,6 @@
 DESCRIPTION = "Generate system.bin file for booting Mender-based images"
-LICENSE = "CLOSED"
+LICENSE = "MIT"
+LIC_FILES_CHKSUM = "file://${COMMON_LICENSE_DIR}/MIT;md5=0835ade698e0bcf8506ecda2f7b4f302"
 
 include machine-xilinx-${SOC_FAMILY}.inc
 
@@ -9,9 +10,6 @@ DEPENDS += "bootgen-native"
 DEPENDS += "${@(d.getVar('BIF_PARTITION_ATTR') or "").replace('bitstream', 'virtual/bitstream')}"
 
 PACKAGE_ARCH = "${MACHINE_ARCH}"
-
-LICENSE = "MIT"
-LIC_FILES_CHKSUM = "file://${COMMON_LICENSE_DIR}/MIT;md5=0835ade698e0bcf8506ecda2f7b4f302"
 
 BOOTGEN_EXTRA_ARGS ?= ""
 
@@ -71,12 +69,13 @@ python do_configure() {
 do_compile() {
     if [ -f "${S}/systemgen.bif" ] # checking if file exist
     then
-	    bbplain "BIF file contents: "
-        while read line
-        do
-            bbplain "$line"
-        done <"${S}/systemgen.bif" # double quotes important to prevent word splitting
-        bbplain ""
+        bbnote "Reguire file found: ${S}/systemgen.bif"
+        #bbplain "BIF file contents: "
+        #while read line
+        #do
+        #    bbplain "$line"
+        #done <"${S}/systemgen.bif" # double quotes important to prevent word splitting
+        #bbplain ""
     else
         bbfatal "Required file not found: ${S}/systemgen.bif"
     fi
@@ -90,9 +89,10 @@ do_compile() {
 }
 
 do_install() {
-    bbwarn "S: ${S}"
-    bbwarn "D: ${D}"
-    install -m 0644 ${S}/system.bin ${D}/boot/system.bin
+    #bbwarn "S: ${S}"
+    #bbwarn "D: ${D}"
+    install -d ${D}/boot/bitstream
+    install -m 0644 ${S}/system.bin ${D}/boot/bitstream/system.bin
 }
 
-FILES:${PN} += "/boot/system.bin"
+FILES:${PN} += "/boot/bitstream/system.bin"

@@ -14,10 +14,10 @@ setenv default_bootargs ${bootargs}
 # If root is set in bootargs, this should override the setting by placing it at the end
 setenv bootargs ${default_bootargs} root=${mender_kernel_root}
 
-if test -e ${mender_uboot_root} /boot/system.bin; then
-	ext4load ${mender_uboot_root} @@BITSTREAM_LOAD_ADDRESS@@ /boot/system.bin && fpga load 0 @@BITSTREAM_LOAD_ADDRESS@@ ${filesize}
-elif test -e ${mender_uboot_root} /boot/system.bit; then
-	ext4load ${mender_uboot_root} @@BITSTREAM_LOAD_ADDRESS@@ /boot/system.bit && fpga loadp 0 @@BITSTREAM_LOAD_ADDRESS@@ ${filesize}
+if test -e ${mender_uboot_root} /boot/bitstream/system.bin; then
+	ext4load ${mender_uboot_root} @@BITSTREAM_LOAD_ADDRESS@@ /boot/bitstream/system.bin && fpga load 0 @@BITSTREAM_LOAD_ADDRESS@@ ${filesize}
+elif test -e ${mender_uboot_root} /boot/bitstream/system.bit; then
+	ext4load ${mender_uboot_root} @@BITSTREAM_LOAD_ADDRESS@@ /boot/bitstream/system.bit && fpga loadp 0 @@BITSTREAM_LOAD_ADDRESS@@ ${filesize}
 fi
 if test -e ${mender_uboot_root} /boot/@@KERNEL_IMAGE@@; then
 	ext4load ${mender_uboot_root} @@KERNEL_LOAD_ADDRESS@@ /boot/@@KERNEL_IMAGE@@;
