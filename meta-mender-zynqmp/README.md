@@ -75,6 +75,8 @@ Within the templates found in this layer, examples from `templates` could be ren
 ### Include yocto-style *.conf files in PetaLinux build
 First, if necessary, create your own mender-zynqmp-target.conf file based on the example provided in the templates folder of this repository (conf/mender-zynqmp-target.conf.example).  Renamed examples include mender-zynqmp-u96v2.conf or mender-zynmp-iwg36s.conf, but you can name it whatever you like.
 
+Secondly, take the templates/recipes-mender/mender-client/ files need to be renamed and included in the target layer.  Edit and rename templates/recipes-mender/mender-client/mender-client_%.bbappend.sample to mender-client_%.bbappend with any changes that are necessary.  Also, edit and rename templates/recipes-mender/mender-client/files/mender.conf.example to mender.conf with any necessary changes (**pay attention to the server URL included in mender.conf**).
+
 Then, in `<petalinux project directory>/project-spec/meta-user/conf/petalinuxbsp.conf` you must add the following lines to include required configuration settings for Mender:
 
 ```
