@@ -115,7 +115,7 @@ However, the instructions in the current revision leave out an important adjustm
 1. Install boot.bin and FSBL environment if the eMMC doesn't already have that installed (or it is corrupted), so that u-boot console can be reached (see "3.1 JTAG Programming" in the doc above)
 
 1. Program the USB drive using host PC, by copying all the binaries (Image, system.dtb, rootfs.cpio.gz.u-boot & iwtest) from
-deliverables.
+iWave binary deliverables.  These file versions should match the u-boot and FSBL that are on the board, so if the board was preloaded with older u-boot and FSBL then it may be necessary to locate older binaries provided by iWave.
 
 1. Insert USB drive to USB Port on board and switch on the board. Stop at U-Boot console and execute the below
 commands to boot kernel from USB.
@@ -128,6 +128,7 @@ commands to boot kernel from USB.
 
 1. Proceed to formatting the eMMC using fdisk as described in the Software User Guide, with the following configuration:
 ```
+root@IWG36S> umount /dev/mmcblk0p*
 root@IWG36S> fdisk /dev/mmcblk0
 Command (m for help): p
 Command (m for help): d
@@ -142,14 +143,11 @@ e extended
 Select (default p): p
 Partition number (1-4, default 1): 1
 First sector (2048-15759359, default 2048): 65536
-Last sector, +sectors or +size{K,M,G} (65536-15759359, default 15759359): +262144
+Last sector, +sectors or +size{K,M,G} (65536-15759359, default 15759359): +262143
+
 Created a new partition 1 of type 'Linux' and of size 128 MiB.
-Partition #1 contains a vfat signature.
-Do you want to remove the signature? [Y]es/[N]o: Y
-The signature will be removed by a write command.
 
 Command (m for help): t
-Partition number (1-4): 1
 Hex code (type L to list codes): c
 Changed system type of partition 1 to c (W95 FAT32 (LBA))
 
@@ -159,9 +157,8 @@ p primary (1 primary, 0 extended, 3 free)
 e extended
 Select (default p): p
 Partition number (1-4, default 2): 2
-First sector (264193-15759359, default 266240): 
-(Using default value)
-Last sector, +sectors or +size{K,M,G} (2048-15759359, default 15759359): +5242880
+First sector (264193-15759359, default 2048): 327680
+Last sector, +sectors or +size{K,M,G} (2048-15759359, default 15759359): +5242879
 
 Created a new partition 2 of type 'Linux' and of size 2.5 GiB.
 
@@ -177,9 +174,8 @@ p primary (2 primary, 0 extended, 2 free)
 e extended
 Select (default p): p
 Partition number (1-4, default 3): 3
-First sector (264193-15273599, default 5511168):
-(Using default value)
-Last sector, +/-sectors or +/-size{K,M,G,T,P} (5511168-15273599, default 15273599): +5242880
+First sector (264193-15273599, default 2048): 5570560
+Last sector, +/-sectors or +/-size{K,M,G,T,P} (5511168-15273599, default 15273599): +5242879
 
 Created a new partition 3 of type 'Linux' and of size 2.5 GiB.
 
@@ -196,9 +192,8 @@ e extended
 Select (default e): p
 
 Selected partition 4
-First sector (264193-15273599, default 10756096):
-(Using default value)
-Last sector, +/-sectors or +/-size{K,M,G,T,P} (10756096-15273599, default 15273599): +262144
+First sector (264193-15273599, default 2048): 10813440
+Last sector, +/-sectors or +/-size{K,M,G,T,P} (10756096-15273599, default 15273599): +262143
 
 Created a new partition 4 of type 'Linux' and of size 128 MiB.
 
@@ -209,7 +204,7 @@ Hex code or alias (type L to list all): 83
 Changed type of partition 'Linux' to 'Linux'.
 
 Command (m for help): a
-Partition number (1,2, default 2): 1
+Partition number (1-4, default 4): 1
 
 The bootable flag on partition 1 is enabled now.
 
@@ -305,6 +300,16 @@ root@zynqmp-iwg36s:~# sync
 root@zynqmp-iwg36s:~# umount /run/media/mmcblk0p*
 root@zynqmp-iwg36s:~# umount /run/media/sdb*
 ```
+
+### Alternative USB load commands for generated WIC image on USB
+
+If the boot.bin and boot.scr on the device are from the Pattern-generated WIC image, then we must also copy and load system.bit from iWave binaries (extract from BSP).  The system.bit file from the BSP (or XSA package) must be loaded onto the USB drive along with system.dtb, Image, and rootfs.cpio.gz.u-boot.
+
+Replace the usbboot variable update with this:
+
+setenv usbboot 'usb start && usb info; echo Copying Linux from USB to RAM... && load usb 0 0x100000 system.bit && fpga load 0 0x100000 ${filesize} && load usb 0 ${fdt_addr_r} system.dtb && load usb 0 ${kernel_addr_r} Image && load usb 0 ${ramdisk_addr_r} rootfs.cpio.gz.u-boot && booti ${kernel_addr_r} ${ramdisk_addr_r} ${fdt_addr_r}'
+
+All other steps remain the same.
 
 ## Content covered by LICENSE_mender-zynq
 ./recipes-bsp/u-boot/u-boot-mender-zynqmp.inc (from u-boot-mender-zynq.inc)
