@@ -303,7 +303,7 @@ root@zynqmp-iwg36s:~# umount /run/media/sdb*
 
 ### Alternative USB load commands for generated WIC image on USB
 
-If the boot.bin and boot.scr on the device are from the Pattern-generated WIC image, then we must also copy and load system.bit from iWave binaries (extract from BSP).  The system.bit file from the BSP (or XSA package) must be loaded onto the USB drive along with system.dtb, Image, and rootfs.cpio.gz.u-boot.
+If the boot.bin and boot.scr on the device are from a custom-generated WIC image, then we must also copy and load system.bit from iWave binaries (extract from BSP).  The system.bit file from the BSP (or XSA package) must be loaded onto the USB drive along with system.dtb, Image, and rootfs.cpio.gz.u-boot.
 
 Replace the usbboot variable update with this:
 
