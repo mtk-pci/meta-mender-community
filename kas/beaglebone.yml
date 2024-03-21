@@ -1,0 +1,11 @@
+header:
+  version: 11
+  includes:
+  - kas/include/mender-full.yml
+
+repos:
+  meta-mender-community:
+    layers:
+      meta-mender-beaglebone:
+
+machine: beaglebone-yocto

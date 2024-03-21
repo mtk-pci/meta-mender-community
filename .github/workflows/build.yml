@@ -1,0 +1,114 @@
+name: build boards
+
+on:
+  push:
+  schedule:
+    # * is a special character in YAML so you have to quote this string
+    - cron:  '5 2 * * 6'
+
+env:
+  BUILDDIR: gh
+
+jobs:
+  prepare:
+    runs-on: [self-hosted, linux, x64]
+    steps:
+      - name: Clean up
+        run: rm -fR $BUILDDIR
+      - uses: actions/checkout@v4
+      - name: cache metadata layers
+        run: ./ci/update-repos
+        env:
+          LAYERCACHE: ${{ vars.PERSISTENT_DIR }}/layers
+
+  build:
+    needs: [prepare]
+    continue-on-error: ${{ matrix.experimental }}
+    strategy:
+      fail-fast: false
+      matrix:
+        board: [
+          beaglebone,
+          beaglebone-ai64,
+          beagleplay,
+          hardkernel-odroidc2,
+          hardkernel-odroidc4,
+          hardkernel-odroidhc4,
+          hardkernel-odroidn2,
+          hardkernel-odroidn2plus,
+          imx7d-pico,
+          imx7s-warp,
+          jetson-agx-xavier-devkit,
+          jetson-nano-2gb-devkit,
+          jetson-nano-devkit-emmc,
+          jetson-nano-devkit,
+          jetson-tx2-devkit-4gb,
+          jetson-tx2-devkit-tx2i,
+          jetson-tx2-devkit,
+          jetson-xavier-nx-devkit-emmc,
+          jetson-xavier-nx-devkit-tx2-nx,
+          jetson-xavier-nx-devkit,
+          libretech-ac,
+          libretech-cc,
+          nitrogen8m,
+          nitrogen8mm,
+          nitrogen8mn,
+          nitrogen8mp,
+          osd32mp1-emmc-mender,
+          raspberrypi,
+          raspberrypi-cm,
+          raspberrypi0,
+          raspberrypi0-wifi,
+          raspberrypi2,
+          raspberrypi0-2w,
+          raspberrypi0-2w-64,
+          raspberrypi3,
+          raspberrypi3-64,
+          raspberrypi-cm3,
+          raspberrypi4,
+          raspberrypi4-64,
+          qemuarm64,
+          qemux86-64,
+          vexpress-qemu,
+          vexpress-qemu-flash,
+          colibri-imx8x,
+          verdin-imx8mm,
+          verdin-imx8mp,
+          imx8mm-var-dart,
+          sama5d27-som1-ek-sd,
+          sama5d3-xplained,
+          intel-corei7-64,
+          intel-corei7-64-sdcard,
+          intel-nuc-ssd,
+          cubox-i,
+          rock-pi-e,
+          apalis-imx8, 
+          apalis-imx8-boot2qt,
+          x86-virtual
+        ]
+        experimental: [false]
+        subpath: [.]
+        include:
+          - board: apalis-imx6
+            experimental: true
+          - board: colibri-imx6ull,
+            experimental: true
+          - board: stm32mp15-disco
+            experimental: true
+
+    runs-on: [self-hosted, linux, x64]
+    container:
+      # the container image needs to be effectively hardcoded, it seems.
+      image: ghcr.io/theyoctojester/devcontainer-base-yoep:main
+      volumes:
+        - ${{ vars.PERSISTENT_DIR }}/downloads:${{ vars.BUILD_DL_DIR }}
+        - ${{ vars.PERSISTENT_DIR }}/sstate-cache:${{ vars.BUILD_SSTATE_DIR }}
+        - ${{ vars.PERSISTENT_DIR }}/layers:${{ vars.BUILD_LAYERCACHE_DIR }}
+      options: --user ${{ vars.KAS_UID }}:${{ vars.KAS_GID }}
+    steps:
+      - name: enter build dir and build
+        env:
+          DL_DIR: ${{ vars.BUILD_DL_DIR}}
+          SSTATE_DIR: ${{ vars.BUILD_SSTATE_DIR}}
+          KAS_REPO_REF_DIR: ${{ vars.BUILD_LAYERCACHE_DIR}}
+        run: mkdir -p $BUILDDIR/${{ matrix.board }} && cd $BUILDDIR/${{ matrix.board }} && kas build ../../kas/${{ matrix.subpath }}/${{ matrix.board }}.yml
